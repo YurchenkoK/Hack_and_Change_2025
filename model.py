@@ -25,6 +25,9 @@ class Model:
             with open(metadata_path, "r", encoding="utf-8") as f:
                 self.metadata = json.load(f)
 
+        # store metadata path so we can reload metadata at runtime if it appears later
+        self.metadata_path = metadata_path
+
         # best_features: сначала из metadata, иначе падаем обратно на поле из кода
         self.best_features = self.metadata.get("features", None)
         if self.best_features is None:
@@ -114,12 +117,21 @@ class Model:
         submission_df = self.predict_from_dataframe(df_test)
 
         # Save to CSV as before
-        submission_df.to_csv("submission.csv", index=False)
+        # produce CSV bytes (utf-8) and also save to disk for backward compatibility
+        csv_bytes = submission_df.to_csv(index=False).encode("utf-8")
+        try:
+            with open("submission.csv", "wb") as f:
+                f.write(csv_bytes)
+        except Exception:
+            # ignore write errors but continue returning bytes
+            pass
 
         print("=======================================")
-        print("Готово! Файл submission.csv создан.")
+        print("Готово! Файл submission.csv создан (и возвращён как байты).")
         print(submission_df.head())
         print("=======================================")
+
+        return csv_bytes
 
     def predict_from_dataframe(self, df_input: pd.DataFrame) -> pd.DataFrame:
         """Apply preprocessing to a DataFrame and return a submission DataFrame with columns ['id','target'].
@@ -127,6 +139,20 @@ class Model:
         This method keeps the same logic as exec but accepts an in-memory DataFrame (used by FastAPI handlers).
         """
         df_test = df_input.copy()
+
+        # If metadata file was created after the process started, try reloading it now
+        try:
+            if os.path.exists(self.metadata_path):
+                with open(self.metadata_path, 'r', encoding='utf-8') as f:
+                    new_meta = json.load(f)
+                # update only if features exist in metadata
+                if new_meta.get('features'):
+                    self.metadata = new_meta
+                    self.best_features = self.metadata.get('features', self.best_features)
+                    self.median_fill = self.metadata.get('median_fill', self.median_fill)
+        except Exception:
+            # don't fail inference just because metadata reload failed
+            pass
 
         # 1) Try numeric conversion where safe
         self._try_numeric_conversion(df_test)
@@ -214,7 +240,34 @@ class Model:
         try:
             pred = self.best_model.predict(X_test_final)
         except Exception as e:
-            raise RuntimeError(f"Prediction failed: {e}. X_test_final shape: {X_test_final.shape}. Columns: {X_test_final.columns.tolist()}")
+            # Diagnostic information to help debug model compatibility issues
+            model = self.best_model
+            try:
+                model_type = type(model).__name__
+                model_mro = [c.__name__ for c in type(model).__mro__]
+            except Exception:
+                model_type = str(type(model))
+                model_mro = []
+
+            has_get_params = hasattr(model, 'get_params')
+            try:
+                if has_get_params:
+                    gp = model.get_params()
+                    try:
+                        gp_keys = list(gp.keys())[:10]
+                        get_params_info = f"get_params() keys (first 10): {gp_keys}"
+                    except Exception as e_gp_keys:
+                        get_params_info = f"get_params() returned but listing keys failed: {e_gp_keys}"
+                else:
+                    get_params_info = "no get_params attribute"
+            except Exception as e_gp:
+                get_params_info = f"get_params() raised: {e_gp}"
+
+            raise RuntimeError(
+                f"Prediction failed: {e}. Model type: {model_type}. MRO: {model_mro}. "
+                f"has_get_params: {has_get_params}. get_params_info: {get_params_info}. "
+                f"X_test_final shape: {X_test_final.shape}. Columns: {X_test_final.columns.tolist()}"
+            )
 
         # Prepare submission
         id_col = "id" if "id" in df_test.columns else None
