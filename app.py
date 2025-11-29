@@ -1,3 +1,5 @@
+import io
+
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import FileResponse
 import pandas as pd
@@ -50,16 +52,9 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Формат файла должен быть CSV")
 
     try:
-        # Читаем CSV файл
         contents = await file.read()
-
-        # Создаем временный файл
-        with tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix='.csv') as temp_file:
-            temp_file.write(contents)
-            temp_file_path = temp_file.name
-
         # Используем существующий метод exec
-        model.exec(temp_file_path)
+        model.exec(io.BytesIO(contents))
 
         # Читаем результат
         result_path = "submission.csv"
@@ -75,12 +70,6 @@ async def predict(file: UploadFile = File(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ошибка обработки: {str(e)}")
-
-    finally:
-        # Очистка временных файлов
-        if 'temp_file_path' in locals() and os.path.exists(temp_file_path):
-            os.unlink(temp_file_path)
-
 
 @app.post("/predict_json")
 async def predict_json(file: UploadFile = File(...)):
