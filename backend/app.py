@@ -2,6 +2,7 @@ import io
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import tempfile
 import os
@@ -14,6 +15,16 @@ app = FastAPI(
     title="Income Prediction API",
     description="API для предсказания дохода на основе финансовых данных",
     version="1.0.0"
+)
+
+# Enable CORS for local development (allow Vite dev server)
+# In production, restrict origins to your front domain(s)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Глобальная переменная для модели
