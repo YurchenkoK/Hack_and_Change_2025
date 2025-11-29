@@ -5,6 +5,9 @@ from fastapi.responses import FileResponse
 import pandas as pd
 import tempfile
 import os
+
+from starlette.responses import StreamingResponse
+
 from model import Model
 # Инициализация FastAPI приложения
 app = FastAPI(
@@ -32,6 +35,9 @@ async def health_check():
     """Проверка статуса API"""
     return {"status": "healthy", "model_loaded": model is not None}
 
+@app.get("/metrics")
+async def metrics():
+    return {"metrics": 1}
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
@@ -54,19 +60,16 @@ async def predict(file: UploadFile = File(...)):
     try:
         contents = await file.read()
         # Используем существующий метод exec
-        model.exec(io.BytesIO(contents))
+        csv_bytes=model.exec(io.BytesIO(contents))
 
-        # Читаем результат
-        result_path = "submission.csv"
-        if os.path.exists(result_path):
-            # Возвращаем файл с результатами
-            return FileResponse(
-                result_path,
-                media_type='text/csv',
-                filename='predictions.csv'
-            )
-        else:
-            raise HTTPException(status_code=500, detail="Ошибка при создании файла с результатами")
+        print(f"Сгенерирован результат размером {len(csv_bytes)} байт")
+
+        # Возвращаем StreamingResponse
+        return StreamingResponse(
+            io.BytesIO(csv_bytes),
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=predictions.csv"}
+        )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ошибка обработки: {str(e)}")
