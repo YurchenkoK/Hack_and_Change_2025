@@ -1,6 +1,6 @@
-## Команда "Марсель"
+# Alfa Marseille — Прогноз дохода
 
-Выполнили:
+## Команда "Марсель"
 
 - **Малышко Артём** - Data Scientist
 - **Юрченко Кирилл** - Data Analyst
@@ -8,56 +8,57 @@
 - **Матвеев Илья** - Frontend
 - **Микулин Михаил** - Frontend
 
-Структура репозитория:
-- `backend/` - Python-бэкенд (Flask/FastAPI/прочее)
-- `frontend/` - Vite/React фронтенд
+## Инструкция по запуску
 
-**Локальный запуск**
+### Требования
 
-1) Запуск backend
+- Python 3.10+
+- Node.js 18+
+- PowerShell (Windows)
+
+### 1. Клонирование репозитория
 
 ```powershell
-# Находясь в папке backend и с активированным .venv
-& .\.venv\Scripts\python.exe -m uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+git clone https://github.com/YurchenkoK/Hack_and_Change_2025.git
+cd Hack_and_Change_2025
 ```
 
-- Откройте `http://127.0.0.1:8000/docs` для Swagger UI и ручного тестирования.
-
-2) Frontend - установка и запуск
+### 2. Настройка и запуск Backend
 
 ```powershell
-cd ..\frontend
+# Переход в папку backend
+cd backend
+
+# Создание виртуального окружения
+python -m venv .venv
+
+# Активация виртуального окружения
+.\.venv\Scripts\Activate.ps1
+
+# Установка зависимостей
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+
+# Запуск сервера
+python -m uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Backend будет доступен на `http://localhost:8000`  
+Swagger документация: `http://localhost:8000/docs`
+
+### 3. Настройка и запуск Frontend
+
+Откройте новый терминал:
+
+```powershell
+# Переход в папку frontend (из корня репозитория)
+cd frontend
+
+# Установка зависимостей
 npm install
+
+# Запуск dev-сервера
 npm run dev
 ```
 
-- Фронтенд будет доступен по умолчанию на `http://localhost:5173`.
-
-**Основные API endpoints**
-
-- `GET /` - корень
-- `GET /health` - статус сервиса
-- `GET /metrics` - тестовый endpoint
-- `POST /predict` - возвращает CSV с предсказаниями
-- `POST /predict_json` - возвращает JSON с предсказаниями
-- `POST /api/v1/income/predict-file` - endpoint, используемый фронтендом
-
-**Модель и формат ответа**
-
-- Модель загружается и используется в `backend/model.py`.
-- Ожидаемый формат ответа, который использует фронтенд (пример):
-
-```json
-{
-	"request_id": "...",
-	"file_name": "sample.csv",
-	"n_rows": 123,
-	"target": [10000.0, 12000.0],
-	"summary": {
-		"target_mean": 11000.0,
-		"target_median": 10500.0,
-		"target_min": 9000.0,
-		"target_max": 13000.0
-	}
-}
-```
+Frontend будет доступен на `http://localhost:5173`
