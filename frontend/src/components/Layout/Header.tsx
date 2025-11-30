@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Tag } from '../ui/Tag';
 
@@ -15,6 +16,12 @@ const Title = styled.div`
   font-weight: 700;
   font-size: 20px;
   letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 
 const Dot = styled.span`
@@ -31,9 +38,11 @@ const Subtitle = styled.span`
 `;
 
 export const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <Bar>
-      <Title>
+      <Title onClick={() => navigate('/')}>
         <Dot />
         Alfa Marseille
       </Title>
