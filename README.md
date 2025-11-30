@@ -4,13 +4,11 @@
 
 ## Команда "Марсель"
 
-| Участник | Роль | Вклад |
-|----------|------|-------|
-| **Малышко Артём** | Data Scientist | Обучение и оптимизация ML-модели LightGBM, feature engineering |
-| **Юрченко Кирилл** | Data Analyst | Анализ данных, разработка бизнес-рекомендаций, метрики |
-| **Гилятзединов Кирилл** | Backend Developer | Разработка FastAPI сервера, интеграция модели, API endpoints |
-| **Матвеев Илья** | Frontend Developer | React интерфейс, компоненты, UX/UI дизайн |
-| **Микулин Михаил** | Frontend Developer | TypeScript типизация, routing, styled-components |
+- **Малышко Артём** - Data Scientist
+- **Юрченко Кирилл** - Data Analyst
+- **Гилятзединов Кирилл** - Backend
+- **Матвеев Илья** - Frontend
+- **Микулин Михаил** - Frontend
 
 ## Структура проекта
 
