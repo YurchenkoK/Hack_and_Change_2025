@@ -59,6 +59,13 @@ Hack_and_Change_2025/
 - Node.js 18.0+
 - npm 9.0+
 
+### Клонирование репозитория
+
+```bash
+git clone https://github.com/YurchenkoK/Hack_and_Change_2025.git
+cd Hack_and_Change_2025
+```
+
 ### Запуск Backend
 
 ```bash
