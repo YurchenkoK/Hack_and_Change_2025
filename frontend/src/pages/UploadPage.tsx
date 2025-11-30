@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { UploadZone } from '../components/UploadCard/UploadZone';
 import { StatusPanel, getStatusLabel, getTone } from '../components/UploadCard/StatusPanel';
+import { PredictionHistory } from '../components/UploadCard/PredictionHistory';
 import { Tag } from '../components/ui/Tag';
 import type { PredictionResponse, UploadStatus } from '../types/api';
 
@@ -10,8 +11,10 @@ interface UploadPageProps {
   selectedFile: File | null;
   result: PredictionResponse | null;
   errorMessage: string | null;
+  history: PredictionResponse[];
   onFileSelected: (file: File | null) => void;
   onUpload: () => void;
+  onClearHistory: () => void;
 }
 
 export const UploadPage = ({
@@ -19,8 +22,10 @@ export const UploadPage = ({
   selectedFile,
   result,
   errorMessage,
+  history,
   onFileSelected,
-  onUpload
+  onUpload,
+  onClearHistory
 }: UploadPageProps) => {
   const label = getStatusLabel(status, selectedFile, result, errorMessage);
   const tone = status === 'error' ? 'default' : getTone(status);
@@ -72,6 +77,10 @@ export const UploadPage = ({
               flat
             />
           </CardFrame>
+        </Block>
+
+        <Block>
+          <PredictionHistory history={history} onClear={onClearHistory} />
         </Block>
       </Sections>
     </PageMotion>

@@ -14,6 +14,7 @@ export const App = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [result, setResult] = useState<PredictionResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [history, setHistory] = useState<PredictionResponse[]>([]);
 
   const navigate = useNavigate();
 
@@ -46,13 +47,19 @@ export const App = () => {
         throw new Error(apiError || 'Не удалось загрузить файл');
       }
 
-      setResult(payload as PredictionResponse);
+      const predictionResult = payload as PredictionResponse;
+      setResult(predictionResult);
+      setHistory(prev => [...prev, predictionResult]);
       setStatus('success');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Непредвиденная ошибка';
       setErrorMessage(message);
       setStatus('error');
     }
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
   };
 
   const goToUpload = () => navigate('/upload');
@@ -71,8 +78,10 @@ export const App = () => {
                 selectedFile={selectedFile}
                 result={result}
                 errorMessage={errorMessage}
+                history={history}
                 onFileSelected={handleFileSelected}
                 onUpload={handleUpload}
+                onClearHistory={handleClearHistory}
               />
             }
           />

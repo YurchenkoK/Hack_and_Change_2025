@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import { TopFeatures } from '../components/UploadCard/TopFeatures';
+import { ProductRecommendationsCard } from '../components/UploadCard/ProductRecommendationsCard';
 
 interface HomePageProps {
   onStart: () => void;
@@ -47,6 +49,14 @@ export const HomePage = ({ onStart }: HomePageProps) => {
             </ServiceCard>
           ))}
         </ServicesGrid>
+      </Section>
+
+      <Section>
+        <TopFeatures />
+      </Section>
+
+      <Section>
+        <ProductRecommendationsCard />
       </Section>
     </PageMotion>
   );
@@ -192,7 +202,7 @@ const SectionTitle = styled.h2`
 
 const ServicesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
@@ -206,6 +216,14 @@ const ServiceCard = styled.div<{ $accent?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.sm};
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: ${({ theme }) => theme.colors.accent};
+  }
 `;
 
 const IconBubble = styled.div`
