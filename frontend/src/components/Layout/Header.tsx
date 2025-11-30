@@ -38,7 +38,7 @@ export const Header = () => {
         Alfa Marseille
       </Title>
       <Tag tone="muted">
-        <Subtitle>Продам гараж</Subtitle>
+        <Subtitle>Прогноз дохода</Subtitle>
       </Tag>
     </Bar>
   );

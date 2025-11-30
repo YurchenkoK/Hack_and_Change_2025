@@ -94,10 +94,16 @@ class Model:
         submission_df = self.predict_from_dataframe(df_test)
         csv_bytes = submission_df.to_csv(index=False).encode("utf-8")
         try:
-            with open("submission.csv", "wb") as f:
+            repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+            out_path = os.path.join(repo_root, 'submission.csv')
+            with open(out_path, "wb") as f:
                 f.write(csv_bytes)
         except Exception:
-            pass
+            try:
+                with open("submission.csv", "wb") as f:
+                    f.write(csv_bytes)
+            except Exception:
+                pass
         return csv_bytes
 
     def predict_from_dataframe(self, df_input: pd.DataFrame) -> pd.DataFrame:

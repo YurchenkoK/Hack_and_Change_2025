@@ -105,6 +105,20 @@ async def predict_file_api(file: UploadFile = File(...)):
         df_test = pd.read_csv(pd.io.common.BytesIO(contents), decimal=',', sep=';')
         result_df = model.predict_from_dataframe(df_test)
         target_list = result_df['target'].tolist() if 'target' in result_df.columns else []
+        
+        # Save submission.csv to project root (next to frontend and backend)
+        try:
+            import os
+            repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+            submission_path = os.path.join(repo_root, 'submission.csv')
+            result_df.to_csv(submission_path, index=False)
+        except Exception:
+            # Fallback to current directory if write fails
+            try:
+                result_df.to_csv('submission.csv', index=False)
+            except Exception:
+                pass
+        
         summary = {
             'target_mean': float(statistics.mean(target_list)) if target_list else 0.0,
             'target_median': float(statistics.median(target_list)) if target_list else 0.0,
