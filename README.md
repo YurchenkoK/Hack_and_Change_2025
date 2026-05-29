@@ -6,7 +6,7 @@ A machine learning system that predicts individual customer income for Alfa Bank
 
 ## How it works
 
-The model was trained on ~100 financial and behavioral features derived from transaction history, BKI credit data, salary records, and mobile banking activity. Key signals include average credit turnover, salary income estimates, spending patterns by category (supermarkets, clothing, cafes), and SBP transfer volumes.
+The model was trained on 273 financial and behavioral features derived from transaction history, BKI credit data, salary records, and mobile banking activity. Key signals include average credit turnover, salary income estimates, spending patterns by category (supermarkets, clothing, cafes), and SBP transfer volumes.
 
 Predictions are exposed through a FastAPI backend and consumed by a React frontend that visualizes results and supports prediction history.
 
@@ -57,7 +57,7 @@ UI available at `http://localhost:5173`
 | Name | Role |
 |---|---|
 | Artem Malyshko | Data Science |
-| Kirill Yurchenko | Data Analysis |
+| Kirill Yurchenko | Data Analyst |
 | Kirill Gilyatzdinov | Backend |
 | Ilya Matveev | Frontend |
 | Mikhail Mikulin | Frontend |
